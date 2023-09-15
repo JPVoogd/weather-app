@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <template>
   <div id="app">
     <main>
@@ -178,7 +179,7 @@ export default {
   methods: {
     fetchLocation() {
       const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
-      const apiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${apiKey}`;
+      const apiUrl = `api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${apiKey}`;
 
       axios
           .get(apiUrl)
@@ -194,7 +195,7 @@ export default {
     },
     fetchWeather() {
       const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
+      const apiUrl = `api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
 
       axios
           .get(apiUrl)
