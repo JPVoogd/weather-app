@@ -163,7 +163,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import moment from 'moment-timezone';
 
 export default {
@@ -173,8 +172,8 @@ export default {
       url_base: 'https://api.openweathermap.org/data/2.5/onecall',
       url_location: 'https://api.openweathermap.org/geo/1.0/direct',
       query: '',
-      weatherData: {},
-      location: {},
+      weatherData: null,
+      location: null,
       lat: '',
       lon: '',
     };
