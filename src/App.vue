@@ -1,174 +1,662 @@
 <template>
-  <div id="app" :class="typeof weather.main != 'undefined' && weather.main.temp > 16 ? 'warm' : ''">
-  <main>
+  <div id="app">
+    <main>
+      <h1 class="title">Anemoi's Forecast</h1>
       <div class="search-box">
-        <input type="text" class="search-bar" placeholder="Search..." v-model="query" @keypress="fetchWeather">
+        <input type="text" class="search-bar" v-model="city" placeholder="Enter city name"
+               @keydown.enter="fetchLocation"/>
       </div>
 
-      <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
-        <div class="location-box">
-          <div class="location">{{ weather.name }}, {{ weather.sys.country }}</div>
-          <div class="date">{{ dateBuilder() }}</div>
+      <div class="weather-wrap" v-if="weatherData">
+
+        <div class="cards">
+          <div class="card location">
+            <div class="location-card">{{ locationData[0].name }}, {{ locationData[0].country }}</div>
+            <div class="time">{{ getTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
+            <div class="date">{{ getDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
+          </div>
+
+          <div class="card weather">
+            <div>
+              <div class="first-section">
+                <div class="temps">
+                  <h2 class="temp">{{ Math.round(weatherData.current.temp) }}°C</h2>
+                  <h3 class="temp-feel">Feels like: {{ Math.round(weatherData.current.feels_like) }}°C</h3>
+                </div>
+
+                <div class="sun">
+                  <div class="sunrise">
+                    <img src="./assets/weather/wi-sunrise.svg" alt="">
+                    <div>
+                      <h4>Sunrise</h4>
+                      <p>{{ formattedSunriseTime }}</p></div>
+                  </div>
+
+                  <div class="sunset">
+                    <img src="./assets/weather/wi-sunset.svg" alt="">
+                    <div>
+                      <h4>Sunset </h4>
+                      <p>{{ formattedSunsetTime }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="middle-section">
+              <img :src="getWeatherIconUrl(weatherData.current.weather[0].icon)" alt="Weather Icon">
+              <p>{{ weatherData.current.weather[0].description }}</p>
+            </div>
+
+            <div class="last-section">
+              <div>
+                <img src="./assets/weather/wi-humidity.svg" alt="">
+                <p>{{ weatherData.current.humidity }}%</p>
+                <p>humidity</p>
+              </div>
+
+              <div>
+                <img src="./assets/weather/wi-windy.svg" alt="">
+                <p>{{ weatherData.current.wind_speed }}m/s</p>
+                <p>Wind Speed</p>
+              </div>
+
+              <div>
+                <img src="./assets/weather/wi-barometer.svg" alt="">
+                <p>{{ weatherData.current.pressure }}Pa</p>
+                <p>Pressure</p>
+              </div>
+
+              <div>
+                <img src="./assets/weather/wi-wind-deg.svg" alt="">
+                <p>{{ weatherData.current.wind_deg }}</p>
+                <p>Deg</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="weather-box">
-          <div class="temp">{{ Math.round(weather.main.temp) }}°c</div>
-          <div class="weather">{{ weather.weather[0].main }}</div>
+        <div class="cardsTwo">
+          <div class="card forecast-day">
+            <h2>5 Days Forecast:</h2>
 
+            <div class="forecast-days">
+              <img :src="getWeatherIconUrl(weatherData.daily[0].weather[0].icon)" alt="Weather Icon" class="item">
+              <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
+              <p class="item">{{ getDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
+            </div>
+
+            <div class="forecast-days">
+              <img :src="getWeatherIconUrl(weatherData.daily[1].weather[0].icon)" alt="Weather Icon" class="item">
+              <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
+              <p class="item">{{ getDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
+            </div>
+
+            <div class="forecast-days">
+              <img :src="getWeatherIconUrl(weatherData.daily[2].weather[0].icon)" alt="Weather Icon" class="item">
+              <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
+              <p class="item">{{ getDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
+            </div>
+
+            <div class="forecast-days">
+              <img :src="getWeatherIconUrl(weatherData.daily[3].weather[0].icon)" alt="Weather Icon" class="item">
+              <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
+              <p class="item">{{ getDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
+            </div>
+
+            <div class="forecast-days">
+              <img :src="getWeatherIconUrl(weatherData.daily[4].weather[0].icon)" alt="Weather Icon" class="item">
+              <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
+              <p class="item">{{ getDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
+            </div>
+
+          </div>
+
+          <div class="card forecast-hourly">
+            <h2>Hourly Forecast:</h2>
+
+            <div class="forecast-card">
+              <div class="forecast-hours">
+                <p>{{ formattedTime(weatherData.hourly[1].dt) }}</p>
+                <img :src="getWeatherIconUrl(weatherData.hourly[1].weather[0].icon)" alt="Weather Icon">
+                <p>{{ weatherData.hourly[1].temp }}°C</p>
+                <p>{{ weatherData.hourly[1].weather[0].description }}</p>
+              </div>
+
+              <div class="forecast-hours">
+                <p>{{ formattedTime(weatherData.hourly[2].dt) }}</p>
+                <img :src="getWeatherIconUrl(weatherData.hourly[2].weather[0].icon)" alt="Weather Icon">
+                <p>{{ weatherData.hourly[2].temp }}°C</p>
+                <p>{{ weatherData.hourly[2].weather[0].description }}</p>
+              </div>
+
+              <div class="forecast-hours">
+                <p>{{ formattedTime(weatherData.hourly[3].dt) }}</p>
+                <img :src="getWeatherIconUrl(weatherData.hourly[3].weather[0].icon)" alt="Weather Icon">
+                <p>{{ weatherData.hourly[3].temp }}°C</p>
+                <p>{{ weatherData.hourly[3].weather[0].description }}</p>
+              </div>
+
+              <div class="forecast-hours">
+                <p>{{ formattedTime(weatherData.hourly[4].dt) }}</p>
+                <img :src="getWeatherIconUrl(weatherData.hourly[4].weather[0].icon)" alt="Weather Icon">
+                <p>{{ weatherData.hourly[4].temp }}°C</p>
+                <p>{{ weatherData.hourly[4].weather[0].description }}</p>
+              </div>
+
+              <div class="forecast-hours">
+                <p>{{ formattedTime(weatherData.hourly[5].dt) }}</p>
+                <img :src="getWeatherIconUrl(weatherData.hourly[5].weather[0].icon)" alt="Weather Icon">
+                <p>{{ weatherData.hourly[5].temp }}°C</p>
+                <p>{{ weatherData.hourly[5].weather[0].description }}</p>
+              </div>
+            </div>
+
+
+          </div>
         </div>
       </div>
-  </main>
+
+    </main>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import moment from 'moment-timezone';
+
 export default {
-  name: 'App',
   data() {
     return {
-      api_key: 'df4a8b9b149ce7743751c9e1c3a1d189',
-      url_base: 'https://api.openweathermap.org/data/2.5/',
-      query: '',
-      weather: {}
-    }
+      city: '',
+      weatherData: null,
+      locationData: null,
+      lat: null,
+      lon: null
+    };
   },
   methods: {
-    fetchWeather(e) {
-      if (e.key == "Enter") {
-        fetch(`${this.url_base}forecast?q=${this.query}&units=metric&APPID=${this.api_key}`).then(res => {
-          return res.json();
-        }).then(this.setResults);
-      }
-    },
-    setResults(results) {
-      this.weather = results;
-    },
-    dateBuilder() {
-      let d = new Date();
-      let months = ["January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"];
-      let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    fetchLocation() {
+      const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
+      const apiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${apiKey}`;
 
-      let day = days[d.getDay()];
-      let date = d.getDate();
-      let month = months[d.getMonth()];
-      let year = d.getFullYear();
+      axios
+          .get(apiUrl)
+          .then((response) => {
+            this.locationData = response.data;
+            this.lat = this.locationData[0].lat
+            this.lon = this.locationData[0].lon
+            this.fetchWeather()
+          })
+          .catch((error) => {
+            console.error('Error fetching weather data:', error);
+          });
+    },
+    fetchWeather() {
+      const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
+      const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
 
-      return `${day} ${date} ${month} ${year}`;
+      axios
+          .get(apiUrl)
+          .then((response) => {
+            this.weatherData = response.data;
+          })
+          .catch((error) => {
+            console.error('Error fetching weather data:', error);
+          });
+
+
+    },
+    getWeatherIconUrl(iconCode) {
+      return `https://openweathermap.org/img/w/${iconCode}.png`;
+    },
+    getTime(dt, timezone) {
+      const timezoneInMinutes = timezone / 60;
+      const currTime = moment().utcOffset(timezoneInMinutes).format("HH:mm");
+
+      return `${currTime}`
+    },
+    getDate(dt, timezone) {
+      let dateTime = new Date(dt * 1000 + (timezone * 1000));
+
+      let weekday = dateTime.toLocaleString('default', {weekday: 'long'});
+      let month = dateTime.toLocaleString('default', {month: 'long'});
+      let date = dateTime.getDate();
+
+      return `${weekday}, ${date} ${month}`;
+    },
+    formattedTime(dt) {
+      const date = new Date(dt * 1000); // Convert to milliseconds
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    },
+    formatTime(timestamp) {
+      const timeMilliseconds = timestamp * 1000;
+      const timeDate = new Date(timeMilliseconds);
+      const hours = timeDate.getHours();
+      const minutes = timeDate.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
     }
+  },
+  computed: {
+    formattedSunriseTime() {
+      if (this.weatherData.current.sunrise) {
+        const sunriseTime = this.weatherData.current.sunrise;
+        return this.formatTime(sunriseTime);
+      }
+      return '';
+    }
+    ,
+    formattedSunsetTime() {
+      if (this.weatherData.current.sunset) {
+        const sunsetTime = this.weatherData.current.sunset;
+        return this.formatTime(sunsetTime);
+      }
+      return '';
+    }
+    ,
   }
+  ,
 }
+;
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-body {
-  font-family: Monospaced, sans-serif;
-}
-
-#app {
-  background-image: url("./assets/cold-bg-full.jpg");
-  background-size: cover;
-  background-position: bottom;
-  transition: 0.4s;
-}
-
-#app.warm {
-  background-image: url("./assets/warm-bg-full.jpg");
+  font-family: poppins, sans-serif;
 }
 
 main {
+  background: linear-gradient(to right bottom, #3a3a3a, #1e1e1e);
   min-height: 100vh;
-  padding: 25px;
+  width: 100%;
+}
 
-  background-image: linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.25));
+h1 {
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 3rem;
+  background: -webkit-linear-gradient(#06629b, #01dd96);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .search-box {
   width: 100%;
-  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.search-box .search-bar {
-  display: block;
-  width: 100%;
-  padding: 15px;
-
-  color: #313131;
-  font-size: 20px;
-
-  appearance: none;
+.search-bar {
+  border-radius: 30px;
+  width: 60%;
+  height: 40px;
+  background-color: #444444;
+  color: #a6a6a6;
+  font-size: 1rem;
+  padding-left: 20px;
   border: none;
-  outline: none;
-  background: none;
-
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
-  background-color: rgba(255,255,255, 0.15);
-  border-radius: 0 16px 0 16px;
-  transition: 0.4s;
+  margin: 1rem auto;
 }
 
-.search-box .search-bar:focus {
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
-  background-color: rgba(255,255,255, 0.75);
-  border-radius: 16px 0 16px 0;
+.cards {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 2rem auto;
 }
 
-.location-box .location {
-  color: #fff;
-  font-size: 32px;
-  font-weight: 500;
+.cardsTwo {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #444444;
+  color: #ffffff;
+  padding: 1rem;
+  height: 18rem;
+  border-radius: 30px;
+  box-shadow: 8px 8px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.card .location {
   text-align: center;
-  text-shadow: 1px 3px rgba(0, 0, 0, 0.25);
+  font-weight: bold;
+  padding-top: 1.5rem;
+  font-size: 1.5rem;
 }
 
-  .location-box .date {
-    color: #fff;
-    font-size: 20px;
-    font-weight: 300;
-    font-style: italic;
+.location {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.location-card {
+  width: 80%;
+  text-align: center;
+  font-weight: bold;
+  padding-top: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.time {
+  text-align: center;
+  font-size: 4rem;
+  font-weight: bolder;
+  margin-top: 4rem;
+}
+
+.date {
+  text-align: center;
+  margin-top: -20px;
+}
+
+.weather {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 65%;
+}
+
+.first-section h2 {
+  font-size: 3.4rem;
+  background: -webkit-linear-gradient(#eee, #333);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.first-section h3 {
+  font-size: 1.2rem;
+  margin-top: -20px;
+  background: -webkit-linear-gradient(#333, #eee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.temps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.sun {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.sunrise {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+}
+
+.sunrise img {
+  height: 60px;
+}
+
+.sunrise h4 {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.sunrise p {
+  font-size: 0.8rem;
+  margin-top: -5px;
+}
+
+.sunset {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sunset img {
+  height: 60px;
+}
+
+.sunset h4 {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+.sunset p {
+  font-size: 0.8rem;
+  margin-top: -5px;
+}
+
+.middle-section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+}
+
+.middle-section img {
+  height: 180px;
+}
+
+.middle-section p {
+  margin: 1rem auto;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.last-section {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.last-section img {
+  height: 75px;
+  width: 100px;
+}
+
+.last-section p {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.forecast-day {
+  text-align: center;
+  width: 30%;
+}
+
+.forecast-day h2 {
+  margin-bottom: 20px;
+}
+
+.forecast-days {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+}
+
+.forecast-days img {
+  height: 40px;
+}
+
+.forecast-hourly {
+  width: 65%;
+  text-align: center;
+}
+
+.forecast-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 1rem;
+
+}
+
+.forecast-hours {
+  background: #373636;
+  width: 20%;
+  min-height: 211px;
+  border-radius: 30px;
+  padding: 1rem;
+}
+
+.forecast-hours img {
+  height: 65px;
+}
+
+.forecast-hours p {
+  font-weight: bold;
+  text-align: center;
+}
+
+.forecast-hours p:first-child {
+  font-size: 1.3rem;
+}
+
+.forecast-hours p:nth-child(3) {
+  font-size: 1rem;
+}
+
+.forecast-hours p:nth-child(4) {
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+@media (max-width: 641px) {
+  .search-bar {
+    width: 80%;
+  }
+
+  .cards {
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+    max-width: 90%;
+    margin: 2rem auto;
+  }
+
+  .cardsTwo {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 2rem;
+    width: 90%;
+    flex-direction: column;
+  }
+
+  .card {
+    min-width: 95%;
+    margin: 0 auto;
+  }
+
+  .weather {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height: 90%;
+  }
+
+  .sun {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .sunrise {
+    margin: 15px;
+    padding: 0 1rem;
+  }
+
+  .sunset {
+    margin: 15px;
+    padding: 0 1rem;
+  }
+
+  .first-section {
+    flex-direction: row;
+  }
+
+  .middle-section img {
+    height: 150px;
+  }
+
+  .middle-section p {
+    margin: 0 auto;
+  }
+
+  .last-section {
+    width: 100%;
+  }
+
+  .last-section img {
+    width: 100%;
+  }
+
+  .forecast-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    height: 500px;
+  }
+
+  .forecast-hourly {
+    width: 90%;
+    height: 750px;
+    margin-bottom: 3rem;
+  }
+
+  .forecast-hours {
+    background: #373636;
+    width: 45%;
+    min-height: 211px;
+    border-radius: 30px;
+    padding: 1rem 0;
+  }
+
+  .forecast-hours img {
+    height: 65px;
+  }
+
+  .forecast-hours p {
+    font-weight: bold;
     text-align: center;
   }
 
-  .weather-box {
-    text-align: center;
+  .forecast-hours p:first-child {
+    font-size: 1.3rem;
   }
 
-  .weather-box .temp {
-    display: inline-block;
-    padding: 10px 25px;
-    color: #fff;
-    font-size: 102px;
-    font-weight: 900;
-
-    text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
-    background-color: rgba(255, 255, 255, 0.25);
-    border-radius: 16px;
-    margin: 30px 0;
-
-    box-shadow: 3px 6px rgba(0, 0, 0, 0.25);
+  .forecast-hours p:nth-child(3) {
+    font-size: 1rem;
   }
 
-  .weather-box .weather {
-    color: #fff;
-    font-size: 48px;
-    font-weight: 700;
-    font-style: italic;
-    text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
-  }
-
-@media only screen and (max-width: 600px) {
-  #app {
-    background-image: url("./assets/cold-bg.jpg");
-  }
-
-  #app.warm {
-    background-image: url("./assets/warm-bg.jpg");
+  .forecast-hours p:nth-child(4) {
+    font-size: 1rem;
+    font-weight: normal;
   }
 }
 </style>
