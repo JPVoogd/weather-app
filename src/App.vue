@@ -4,7 +4,7 @@
     <main>
       <h1 class="title">Anemoi's Forecast</h1>
       <div class="search-box">
-        <input type="text" class="search-bar" v-model="city" placeholder="Enter city name"
+        <input type="text" class="search-bar" v-model="query" placeholder="Enter city name"
                @keydown.enter="fetchLocation"/>
       </div>
 
@@ -163,57 +163,41 @@
 </template>
 
 <script>
+import axios from 'axios';
 import moment from 'moment-timezone';
 
 export default {
   data() {
     return {
-      city: '',
-      weatherData: null,
-      locationData: null,
-      lat: null,
-      lon: null
+      api_key: 'df4a8b9b149ce7743751c9e1c3a1d189',
+      url_base: 'https://api.openweathermap.org/data/2.5/onecall',
+      url_location: 'http://api.openweathermap.org/geo/1.0/direct',
+      query: '',
+      weather: {},
+      location: {},
+      lat: '',
+      lon: '',
     };
   },
   methods: {
-    fetchLocation() {
-      const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
-      const apiUrl = `api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${apiKey}`;
-
-      fetch(apiUrl)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then((data) => {
-            this.locationData = data;
-            this.lat = this.locationData[0].lat;
-            this.lon = this.locationData[0].lon;
-            this.fetchWeather();
-          })
-          .catch((error) => {
-            console.error('Error fetching weather data:', error);
-          });
+    fetchLocation(e) {
+      if (e.key == "Enter") {
+        fetch(`${this.url_location}?q=${this.query}&appid=${this.api_key}`).then(res => {
+          return res.json();
+        }).then(this.locationResults);
+      }
+    },
+    locationResults(results) {
+      this.location = results;
+      console.log(this.location)
+      this.lat = this.location[0].lat
+      this.lon = this.location[0].lon
+      this.fetchWeather()
     },
     fetchWeather() {
-      const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
-
-      fetch(apiUrl)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then((data) => {
-            this.weatherData = data;
-          })
-          .catch((error) => {
-            console.error('Error fetching weather data:', error);
-          });
+      fetch(`${this.url_base}?lat=${this.lat}&lon=${this.lon}&units=metric&APPID=${this.api_key}`).then(res => {
+        return res.json();
+      }).then(this.setResults);
     },
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
