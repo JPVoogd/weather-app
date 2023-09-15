@@ -163,7 +163,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import moment from 'moment-timezone';
 
 export default {
@@ -181,13 +180,18 @@ export default {
       const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
       const apiUrl = `api.openweathermap.org/geo/1.0/direct?q=${this.city}&appid=${apiKey}`;
 
-      axios
-          .get(apiUrl)
+      fetch(apiUrl)
           .then((response) => {
-            this.locationData = response.data;
-            this.lat = this.locationData[0].lat
-            this.lon = this.locationData[0].lon
-            this.fetchWeather()
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            this.locationData = data;
+            this.lat = this.locationData[0].lat;
+            this.lon = this.locationData[0].lon;
+            this.fetchWeather();
           })
           .catch((error) => {
             console.error('Error fetching weather data:', error);
@@ -195,18 +199,21 @@ export default {
     },
     fetchWeather() {
       const apiKey = 'df4a8b9b149ce7743751c9e1c3a1d189';
-      const apiUrl = `api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
+      const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${this.lat}&lon=${this.lon}&units=metric&appid=${apiKey}`;
 
-      axios
-          .get(apiUrl)
+      fetch(apiUrl)
           .then((response) => {
-            this.weatherData = response.data;
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            this.weatherData = data;
           })
           .catch((error) => {
             console.error('Error fetching weather data:', error);
           });
-
-
     },
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
@@ -247,18 +254,15 @@ export default {
         return this.formatTime(sunriseTime);
       }
       return '';
-    }
-    ,
+    },
     formattedSunsetTime() {
       if (this.weatherData.current.sunset) {
         const sunsetTime = this.weatherData.current.sunset;
         return this.formatTime(sunsetTime);
       }
       return '';
-    }
-    ,
+    },
   }
-  ,
 }
 ;
 </script>
