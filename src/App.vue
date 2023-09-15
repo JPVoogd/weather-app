@@ -12,7 +12,7 @@
 
         <div class="cards">
           <div class="card location">
-            <div class="location-card">{{ locationData[0].name }}, {{ locationData[0].country }}</div>
+            <div class="location-card">{{ location[0].name }}, {{ location[0].country }}</div>
             <div class="time">{{ getTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
             <div class="date">{{ getDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
           </div>
@@ -187,9 +187,8 @@ export default {
         }).then(this.locationResults);
       }
     },
-    locationResults(results) {
-      this.location = results;
-      console.log(this.location)
+    locationResults(resultsLocation) {
+      this.location = resultsLocation;
       this.lat = this.location[0].lat
       this.lon = this.location[0].lon
       this.fetchWeather()
@@ -199,9 +198,8 @@ export default {
         return res.json();
       }).then(this.setResults);
     },
-    setResults(results) {
-      this.weatherData = results;
-      console.log(this.weatherData)
+    setResults(resultsWeather) {
+      this.weatherData = resultsWeather;
     },
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
