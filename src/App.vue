@@ -173,7 +173,7 @@ export default {
       url_base: 'https://api.openweathermap.org/data/2.5/onecall',
       url_location: 'https://api.openweathermap.org/geo/1.0/direct',
       query: '',
-      weather: {},
+      weatherData: {},
       location: {},
       lat: '',
       lon: '',
@@ -198,6 +198,10 @@ export default {
       fetch(`${this.url_base}?lat=${this.lat}&lon=${this.lon}&units=metric&APPID=${this.api_key}`).then(res => {
         return res.json();
       }).then(this.setResults);
+    },
+    setResults(results) {
+      this.weatherData = results;
+      console.log(this.weatherData)
     },
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
