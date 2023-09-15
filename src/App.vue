@@ -171,7 +171,7 @@ export default {
     return {
       api_key: 'df4a8b9b149ce7743751c9e1c3a1d189',
       url_base: 'https://api.openweathermap.org/data/2.5/onecall',
-      url_location: 'http://api.openweathermap.org/geo/1.0/direct',
+      url_location: 'https://api.openweathermap.org/geo/1.0/direct',
       query: '',
       weather: {},
       location: {},
