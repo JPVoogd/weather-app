@@ -13,8 +13,8 @@
         <div class="cards">
           <div class="card location">
             <div class="location-card">{{ location[0].name }}, {{ location[0].country }}</div>
-            <div class="time">{{ getTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
-            <div class="date">{{ getDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
+            <div class="time">{{ getLocalTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
+            <div class="date">{{ getLocalDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
           </div>
 
           <div class="card weather">
@@ -30,14 +30,14 @@
                     <img src="./assets/weather/wi-sunrise.svg" alt="">
                     <div>
                       <h4>Sunrise</h4>
-                      <p>{{ formattedSunriseTime }}</p></div>
+                      <p>{{ formattedTime(weatherData.current.sunrise) }}</p></div>
                   </div>
 
                   <div class="sunset">
                     <img src="./assets/weather/wi-sunset.svg" alt="">
                     <div>
                       <h4>Sunset </h4>
-                      <p>{{ formattedSunsetTime }}</p>
+                      <p>{{ formattedTime(weatherData.current.sunset) }}</p>
                     </div>
                   </div>
                 </div>
@@ -84,31 +84,31 @@
             <div class="forecast-days">
               <img :src="getWeatherIconUrl(weatherData.daily[0].weather[0].icon)" alt="Weather Icon" class="item">
               <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
-              <p class="item">{{ getDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
+              <p class="item">{{ getLocalDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
               <img :src="getWeatherIconUrl(weatherData.daily[1].weather[0].icon)" alt="Weather Icon" class="item">
               <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
-              <p class="item">{{ getDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
+              <p class="item">{{ getLocalDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
               <img :src="getWeatherIconUrl(weatherData.daily[2].weather[0].icon)" alt="Weather Icon" class="item">
               <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
-              <p class="item">{{ getDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
+              <p class="item">{{ getLocalDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
               <img :src="getWeatherIconUrl(weatherData.daily[3].weather[0].icon)" alt="Weather Icon" class="item">
               <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
-              <p class="item">{{ getDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
+              <p class="item">{{ getLocalDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
               <img :src="getWeatherIconUrl(weatherData.daily[4].weather[0].icon)" alt="Weather Icon" class="item">
               <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
-              <p class="item">{{ getDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
+              <p class="item">{{ getLocalDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
             </div>
 
           </div>
@@ -120,35 +120,35 @@
               <div class="forecast-hours">
                 <p>{{ formattedTime(weatherData.hourly[1].dt) }}</p>
                 <img :src="getWeatherIconUrl(weatherData.hourly[1].weather[0].icon)" alt="Weather Icon">
-                <p>{{ weatherData.hourly[1].temp }}°C</p>
+                <p>{{ Math.round(weatherData.hourly[1].temp) }}°C</p>
                 <p>{{ weatherData.hourly[1].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
                 <p>{{ formattedTime(weatherData.hourly[2].dt) }}</p>
                 <img :src="getWeatherIconUrl(weatherData.hourly[2].weather[0].icon)" alt="Weather Icon">
-                <p>{{ weatherData.hourly[2].temp }}°C</p>
+                <p>{{ Math.round(weatherData.hourly[2].temp) }}°C</p>
                 <p>{{ weatherData.hourly[2].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
                 <p>{{ formattedTime(weatherData.hourly[3].dt) }}</p>
                 <img :src="getWeatherIconUrl(weatherData.hourly[3].weather[0].icon)" alt="Weather Icon">
-                <p>{{ weatherData.hourly[3].temp }}°C</p>
+                <p>{{ Math.round(weatherData.hourly[3].temp) }}°C</p>
                 <p>{{ weatherData.hourly[3].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
                 <p>{{ formattedTime(weatherData.hourly[4].dt) }}</p>
                 <img :src="getWeatherIconUrl(weatherData.hourly[4].weather[0].icon)" alt="Weather Icon">
-                <p>{{ weatherData.hourly[4].temp }}°C</p>
+                <p>{{ Math.round(weatherData.hourly[4].temp) }}°C</p>
                 <p>{{ weatherData.hourly[4].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
                 <p>{{ formattedTime(weatherData.hourly[5].dt) }}</p>
                 <img :src="getWeatherIconUrl(weatherData.hourly[5].weather[0].icon)" alt="Weather Icon">
-                <p>{{ weatherData.hourly[5].temp }}°C</p>
+                <p>{{ Math.round(weatherData.hourly[5].temp) }}°C</p>
                 <p>{{ weatherData.hourly[5].weather[0].description }}</p>
               </div>
             </div>
@@ -203,13 +203,13 @@ export default {
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
     },
-    getTime(dt, timezone) {
+    getLocalTime(dt, timezone) {
       const timezoneInMinutes = timezone / 60;
       const currTime = moment().utcOffset(timezoneInMinutes).format("HH:mm");
 
       return `${currTime}`
     },
-    getDate(dt, timezone) {
+    getLocalDate(dt, timezone) {
       let dateTime = new Date(dt * 1000 + (timezone * 1000));
 
       let weekday = dateTime.toLocaleString('default', {weekday: 'long'});
@@ -223,31 +223,8 @@ export default {
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
-    },
-    formatTime(timestamp) {
-      const timeMilliseconds = timestamp * 1000;
-      const timeDate = new Date(timeMilliseconds);
-      const hours = timeDate.getHours();
-      const minutes = timeDate.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
     }
   },
-  computed: {
-    formattedSunriseTime() {
-      if (this.weatherData.current.sunrise) {
-        const sunriseTime = this.weatherData.current.sunrise;
-        return this.formatTime(sunriseTime);
-      }
-      return '';
-    },
-    formattedSunsetTime() {
-      if (this.weatherData.current.sunset) {
-        const sunsetTime = this.weatherData.current.sunset;
-        return this.formatTime(sunsetTime);
-      }
-      return '';
-    },
-  }
 }
 ;
 </script>
@@ -273,7 +250,7 @@ h1 {
   padding: 2rem 0;
   font-size: 3rem;
   background: -webkit-linear-gradient(#06629b, #01dd96);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -310,6 +287,7 @@ h1 {
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding-bottom: 5rem;
 }
 
 .card {
@@ -366,7 +344,7 @@ h1 {
 .first-section h2 {
   font-size: 3.4rem;
   background: -webkit-linear-gradient(#eee, #333);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -374,7 +352,7 @@ h1 {
   font-size: 1.2rem;
   margin-top: -20px;
   background: -webkit-linear-gradient(#333, #eee);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
