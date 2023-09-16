@@ -5,7 +5,7 @@
       <h1 class="title">Anemoi's Forecast</h1>
       <div class="search-box">
         <input type="text" class="search-bar" v-model="query" placeholder="Enter city name"
-               @keydown.enter="fetchLocation"/>
+          @keydown.enter="fetchLocation" />
       </div>
 
       <div class="weather-wrap" v-if="weatherData">
@@ -13,7 +13,7 @@
         <div class="cards">
           <div class="card location">
             <div class="location-card">{{ location[0].name }}, {{ location[0].country }}</div>
-            <div class="time">{{ getLocalTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
+            <div class="time">{{ getLocalTime(weatherData.timezone_offset) }}</div>
             <div class="date">{{ getLocalDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
           </div>
 
@@ -30,14 +30,15 @@
                     <img src="./assets/weather/wi-sunrise.svg" alt="">
                     <div>
                       <h4>Sunrise</h4>
-                      <p>{{ formattedTime(weatherData.current.sunrise) }}</p></div>
+                      <p>{{ sunTime(weatherData.current.sunrise, weatherData.timezone_offset) }}</p>
+                    </div>
                   </div>
 
                   <div class="sunset">
                     <img src="./assets/weather/wi-sunset.svg" alt="">
                     <div>
                       <h4>Sunset </h4>
-                      <p>{{ formattedTime(weatherData.current.sunset) }}</p>
+                      <p>{{ sunTime(weatherData.current.sunset, weatherData.timezone_offset) }}</p>
                     </div>
                   </div>
                 </div>
@@ -195,15 +196,15 @@ export default {
     fetchWeather() {
       fetch(`${this.url_base}?lat=${this.lat}&lon=${this.lon}&units=metric&APPID=${this.api_key}`).then(res => {
         return res.json();
-      }).then(this.setResults);
+      }).then(this.weatherResults);
     },
-    setResults(resultsWeather) {
+    weatherResults(resultsWeather) {
       this.weatherData = resultsWeather;
     },
     getWeatherIconUrl(iconCode) {
       return `https://openweathermap.org/img/w/${iconCode}.png`;
     },
-    getLocalTime(dt, timezone) {
+    getLocalTime(timezone) {
       const timezoneInMinutes = timezone / 60;
       const currTime = moment().utcOffset(timezoneInMinutes).format("HH:mm");
 
@@ -212,8 +213,8 @@ export default {
     getLocalDate(dt, timezone) {
       let dateTime = new Date(dt * 1000 + (timezone * 1000));
 
-      let weekday = dateTime.toLocaleString('default', {weekday: 'long'});
-      let month = dateTime.toLocaleString('default', {month: 'long'});
+      let weekday = dateTime.toLocaleString('default', { weekday: 'long' });
+      let month = dateTime.toLocaleString('default', { month: 'long' });
       let date = dateTime.getDate();
 
       return `${weekday}, ${date} ${month}`;
@@ -223,10 +224,20 @@ export default {
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
+    },
+    sunTime(dt, timezone) {
+      let dateTime = new Date(dt * 1000 + (timezone * 1000));
+
+      let time = dateTime.toLocaleTimeString(navigator.language, {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      return `${time}`
     }
   },
 }
-;
+  ;
 </script>
 
 <style>
