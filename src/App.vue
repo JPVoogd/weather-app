@@ -13,7 +13,7 @@
         <div class="cards">
           <div class="card location">
             <div class="location-card">{{ location[0].name }}, {{ location[0].country }}</div>
-            <div class="time">{{ getLocalTime(weatherData.timezone_offset) }}</div>
+            <div class="time">{{ localTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
             <div class="date">{{ getLocalDate(weatherData.current.dt, weatherData.timezone_offset) }}</div>
           </div>
 
@@ -30,7 +30,7 @@
                     <img src="./assets/weather/wi-sunrise.svg" alt="">
                     <div>
                       <h4>Sunrise</h4>
-                      <p>{{ sunTime(weatherData.current.sunrise, weatherData.timezone_offset) }}</p>
+                      <p>{{ localTime(weatherData.current.sunrise, weatherData.timezone_offset) }}</p>
                     </div>
                   </div>
 
@@ -38,7 +38,7 @@
                     <img src="./assets/weather/wi-sunset.svg" alt="">
                     <div>
                       <h4>Sunset </h4>
-                      <p>{{ sunTime(weatherData.current.sunset, weatherData.timezone_offset) }}</p>
+                      <p>{{ localTime(weatherData.current.sunset, weatherData.timezone_offset) }}</p>
                     </div>
                   </div>
                 </div>
@@ -46,7 +46,8 @@
 
             </div>
             <div class="middle-section">
-              <img :src="getWeatherIconUrl(weatherData.current.weather[0].icon)" alt="Weather Icon">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.current.weather[0].icon)}`)"
+                alt="Weather Icon">
               <p>{{ weatherData.current.weather[0].description }}</p>
             </div>
 
@@ -59,20 +60,20 @@
 
               <div>
                 <img src="./assets/weather/wi-windy.svg" alt="">
-                <p>{{ weatherData.current.wind_speed }}m/s</p>
+                <p>{{ Math.round(weatherData.current.wind_speed * 3.16) }}km/h</p>
                 <p>Wind Speed</p>
               </div>
 
               <div>
                 <img src="./assets/weather/wi-barometer.svg" alt="">
-                <p>{{ weatherData.current.pressure }}Pa</p>
+                <p>{{ weatherData.current.pressure }}hPa</p>
                 <p>Pressure</p>
               </div>
 
               <div>
                 <img src="./assets/weather/wi-wind-deg.svg" alt="">
                 <p>{{ weatherData.current.wind_deg }}</p>
-                <p>Deg</p>
+                <p>Degrees</p>
               </div>
             </div>
           </div>
@@ -83,31 +84,36 @@
             <h2>5 Days Forecast:</h2>
 
             <div class="forecast-days">
-              <img :src="getWeatherIconUrl(weatherData.daily[0].weather[0].icon)" alt="Weather Icon" class="item">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[0].weather[0].icon)}`)"
+                alt="Weather Icon">
               <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
               <p class="item">{{ getLocalDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
-              <img :src="getWeatherIconUrl(weatherData.daily[1].weather[0].icon)" alt="Weather Icon" class="item">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[1].weather[0].icon)}`)"
+                alt="Weather Icon">
               <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
               <p class="item">{{ getLocalDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
-              <img :src="getWeatherIconUrl(weatherData.daily[2].weather[0].icon)" alt="Weather Icon" class="item">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[2].weather[0].icon)}`)"
+                alt="Weather Icon">
               <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
               <p class="item">{{ getLocalDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
-              <img :src="getWeatherIconUrl(weatherData.daily[3].weather[0].icon)" alt="Weather Icon" class="item">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[3].weather[0].icon)}`)"
+                alt="Weather Icon">
               <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
               <p class="item">{{ getLocalDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
             </div>
 
             <div class="forecast-days">
-              <img :src="getWeatherIconUrl(weatherData.daily[4].weather[0].icon)" alt="Weather Icon" class="item">
+              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[4].weather[0].icon)}`)"
+                alt="Weather Icon">
               <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
               <p class="item">{{ getLocalDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
             </div>
@@ -119,36 +125,41 @@
 
             <div class="forecast-card">
               <div class="forecast-hours">
-                <p>{{ formattedTime(weatherData.hourly[1].dt) }}</p>
-                <img :src="getWeatherIconUrl(weatherData.hourly[1].weather[0].icon)" alt="Weather Icon">
+                <p>{{ localTime(weatherData.hourly[1].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[1].weather[0].icon)}`)"
+                  alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[1].temp) }}°C</p>
                 <p>{{ weatherData.hourly[1].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
-                <p>{{ formattedTime(weatherData.hourly[2].dt) }}</p>
-                <img :src="getWeatherIconUrl(weatherData.hourly[2].weather[0].icon)" alt="Weather Icon">
+                <p>{{ localTime(weatherData.hourly[2].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[2].weather[0].icon)}`)"
+                  alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[2].temp) }}°C</p>
                 <p>{{ weatherData.hourly[2].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
-                <p>{{ formattedTime(weatherData.hourly[3].dt) }}</p>
-                <img :src="getWeatherIconUrl(weatherData.hourly[3].weather[0].icon)" alt="Weather Icon">
+                <p>{{ localTime(weatherData.hourly[3].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[3].weather[0].icon)}`)"
+                  alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[3].temp) }}°C</p>
                 <p>{{ weatherData.hourly[3].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
-                <p>{{ formattedTime(weatherData.hourly[4].dt) }}</p>
-                <img :src="getWeatherIconUrl(weatherData.hourly[4].weather[0].icon)" alt="Weather Icon">
+                <p>{{ localTime(weatherData.hourly[4].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[4].weather[0].icon)}`)"
+                  alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[4].temp) }}°C</p>
                 <p>{{ weatherData.hourly[4].weather[0].description }}</p>
               </div>
 
               <div class="forecast-hours">
-                <p>{{ formattedTime(weatherData.hourly[5].dt) }}</p>
-                <img :src="getWeatherIconUrl(weatherData.hourly[5].weather[0].icon)" alt="Weather Icon">
+                <p>{{ localTime(weatherData.hourly[5].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[5].weather[0].icon)}`)"
+                  alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[5].temp) }}°C</p>
                 <p>{{ weatherData.hourly[5].weather[0].description }}</p>
               </div>
@@ -164,8 +175,6 @@
 </template>
 
 <script>
-import moment from 'moment-timezone';
-
 export default {
   data() {
     return {
@@ -201,14 +210,59 @@ export default {
     weatherResults(resultsWeather) {
       this.weatherData = resultsWeather;
     },
-    getWeatherIconUrl(iconCode) {
-      return `https://openweathermap.org/img/w/${iconCode}.png`;
-    },
-    getLocalTime(timezone) {
-      const timezoneInMinutes = timezone / 60;
-      const currTime = moment().utcOffset(timezoneInMinutes).format("HH:mm");
-
-      return `${currTime}`
+    getWeatherIcon(iconCode) {
+      switch (iconCode) {
+        case '01d':
+          return `day-clear.svg`
+          break;
+        case '02d':
+          return `day-cloudy.svg`
+          break;
+        case '03d' || '03n':
+          return `cloud.svg`
+          break;
+        case '04d' || '04n':
+          return `cloudy.svg`
+          break;
+        case '09d':
+          return `day-shower.svg`
+          break;
+        case '10d':
+          return `day-rain.svg`
+          break;
+        case '11d':
+          return `day-thunderstorm.svg`
+          break;
+        case '13d':
+          return `day-snow.svg`
+          break;
+        case '50d':
+          return `day-fog.svg`
+          break;
+        case '01n':
+          return `night-clear.svg`
+          break;
+        case '02n':
+          return `night-cloudy.svg`
+          break;
+        case '09n':
+          return `night-shower.svg`
+          break;
+        case '10n':
+          return `night-rain.svg`
+          break;
+        case '11n':
+          return `night-thunderstorm.svg`
+          break;
+        case '13n':
+          return `night-snow.svg`
+          break;
+        case '50n':
+          return `night-fog.svg`
+          break;
+        default:
+          return `day.clear.svg`
+      }
     },
     getLocalDate(dt, timezone) {
       let dateTime = new Date(dt * 1000 + (timezone * 1000));
@@ -219,25 +273,27 @@ export default {
 
       return `${weekday}, ${date} ${month}`;
     },
-    formattedTime(dt) {
-      const date = new Date(dt * 1000); // Convert to milliseconds
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
-    },
-    sunTime(dt, timezone) {
-      let dateTime = new Date(dt * 1000 + (timezone * 1000));
+    localTime(dt, timezone) {
+      const utc_seconds = parseInt(dt, 10) + parseInt(timezone, 10);
+      const utc_milliseconds = utc_seconds * 1000;
+      const local_date = new Date(utc_milliseconds).toUTCString();
 
-      let time = dateTime.toLocaleTimeString(navigator.language, {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+      const dateObject = new Date(local_date);
+      const hours = dateObject.getUTCHours();
+      const minutes = dateObject.getUTCMinutes();
 
-      return `${time}`
+      // Format hours and minutes as strings with leading zeros
+      const formattedHours = hours.toString().padStart(2, '0');
+      const formattedMinutes = minutes.toString().padStart(2, '0');
+
+      // Combine hours and minutes into a formatted string
+      const formattedTime = `${formattedHours}:${formattedMinutes}`;
+
+
+      return `${formattedTime}`;
     }
   },
-}
-  ;
+};
 </script>
 
 <style>
@@ -260,7 +316,7 @@ h1 {
   text-align: center;
   padding: 2rem 0;
   font-size: 3rem;
-  background: -webkit-linear-gradient(#06629b, #01dd96);
+  background: linear-gradient(90deg, #06629b, #01dd96);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -354,7 +410,7 @@ h1 {
 
 .first-section h2 {
   font-size: 3.4rem;
-  background: -webkit-linear-gradient(#eee, #333);
+  background: linear-gradient(90deg, #01dd96, #06629b);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -362,7 +418,7 @@ h1 {
 .first-section h3 {
   font-size: 1.2rem;
   margin-top: -20px;
-  background: -webkit-linear-gradient(#333, #eee);
+  background: linear-gradient(270deg, #01dd96, #06629b);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -637,5 +693,4 @@ h1 {
     font-size: 1rem;
     font-weight: normal;
   }
-}
-</style>
+}</style>
