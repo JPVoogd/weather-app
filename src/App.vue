@@ -27,7 +27,7 @@
 
                 <div class="sun">
                   <div class="sunrise">
-                    <img src="./assets/weather/wi-sunrise.svg" alt="">
+                    <img src="./assets/weather/wi-sunrise.svg" alt="Sunrise Icon">
                     <div>
                       <h4>Sunrise</h4>
                       <p>{{ localTime(weatherData.current.sunrise, weatherData.timezone_offset) }}</p>
@@ -35,7 +35,7 @@
                   </div>
 
                   <div class="sunset">
-                    <img src="./assets/weather/wi-sunset.svg" alt="">
+                    <img src="./assets/weather/wi-sunset.svg" alt="Sunset Icon">
                     <div>
                       <h4>Sunset </h4>
                       <p>{{ localTime(weatherData.current.sunset, weatherData.timezone_offset) }}</p>
@@ -53,25 +53,25 @@
 
             <div class="last-section">
               <div>
-                <img src="./assets/weather/wi-humidity.svg" alt="">
+                <img src="./assets/weather/wi-humidity.svg" alt="Humidity Icon">
                 <p>{{ weatherData.current.humidity }}%</p>
                 <p>humidity</p>
               </div>
 
               <div>
-                <img src="./assets/weather/wi-windy.svg" alt="">
+                <img src="./assets/weather/wi-windy.svg" alt="Wind speed Icon">
                 <p>{{ Math.round(weatherData.current.wind_speed * 3.16) }}km/h</p>
                 <p>Wind Speed</p>
               </div>
 
               <div>
-                <img src="./assets/weather/wi-barometer.svg" alt="">
+                <img src="./assets/weather/wi-barometer.svg" alt="Barometer Icon">
                 <p>{{ weatherData.current.pressure }}hPa</p>
                 <p>Pressure</p>
               </div>
 
               <div>
-                <img src="./assets/weather/wi-wind-deg.svg" alt="">
+                <img src="./assets/weather/wi-wind-deg.svg" alt="Wind degrees Icon">
                 <p>{{ weatherData.current.wind_deg }}</p>
                 <p>Degrees</p>
               </div>
@@ -159,17 +159,14 @@
               <div class="forecast-hours">
                 <p>{{ localTime(weatherData.hourly[5].dt, weatherData.timezone_offset) }}</p>
                 <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[5].weather[0].icon)}`)"
-                  alt="Weather Icon">
+                     alt="Weather Icon">
                 <p>{{ Math.round(weatherData.hourly[5].temp) }}°C</p>
                 <p>{{ weatherData.hourly[5].weather[0].description }}</p>
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
-
     </main>
   </div>
 </template>
@@ -261,7 +258,7 @@ export default {
           return `night-fog.svg`
           break;
         default:
-          return `day.clear.svg`
+          return `cloud.svg`
       }
     },
     getLocalDate(dt, timezone) {
