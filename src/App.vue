@@ -5,7 +5,7 @@
       <h1 class="title">Anemoi's Forecast</h1>
       <div class="search-box">
         <input type="text" class="search-bar" v-model="query" placeholder="Enter city name"
-          @keydown.enter="fetchLocation" />
+          @keydown.enter="fetchLocation" ref="input"/>
       </div>
 
       <div class="weather-wrap" v-if="weatherData">
@@ -82,42 +82,42 @@
         <div class="cardsTwo">
           <div class="card forecast-day">
             <h2>5 Days Forecast:</h2>
+            <div class="flex-container">
+              <div class="forecast-days">
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[0].weather[0].icon)}`)"
+                     alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
+              </div>
 
-            <div class="forecast-days">
-              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[0].weather[0].icon)}`)"
-                alt="Weather Icon">
-              <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
-              <p class="item">{{ getLocalDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
+              <div class="forecast-days">
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[1].weather[0].icon)}`)"
+                     alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
+              </div>
+
+              <div class="forecast-days">
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[2].weather[0].icon)}`)"
+                     alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
+              </div>
+
+              <div class="forecast-days">
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[3].weather[0].icon)}`)"
+                     alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
+              </div>
+
+              <div class="forecast-days">
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[4].weather[0].icon)}`)"
+                     alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
+              </div>
             </div>
-
-            <div class="forecast-days">
-              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[1].weather[0].icon)}`)"
-                alt="Weather Icon">
-              <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
-              <p class="item">{{ getLocalDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
-            </div>
-
-            <div class="forecast-days">
-              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[2].weather[0].icon)}`)"
-                alt="Weather Icon">
-              <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
-              <p class="item">{{ getLocalDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
-            </div>
-
-            <div class="forecast-days">
-              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[3].weather[0].icon)}`)"
-                alt="Weather Icon">
-              <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
-              <p class="item">{{ getLocalDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
-            </div>
-
-            <div class="forecast-days">
-              <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[4].weather[0].icon)}`)"
-                alt="Weather Icon">
-              <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
-              <p class="item">{{ getLocalDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
-            </div>
-
           </div>
 
           <div class="card forecast-hourly">
@@ -188,6 +188,7 @@ export default {
   methods: {
     fetchLocation(e) {
       if (e.key == "Enter") {
+        this.$refs.input.blur()
         fetch(`${this.url_location}?q=${this.query}&appid=${this.api_key}`).then(res => {
           return res.json();
         }).then(this.locationResults);
@@ -519,13 +520,29 @@ h1 {
 
 .forecast-days {
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
   flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .forecast-days img {
-  height: 40px;
+  width: 40px;
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
+}
+
+.item {
+  display: block;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: auto;
+  align-self: auto;
+  order: 0;
 }
 
 .forecast-hourly {
@@ -573,17 +590,22 @@ h1 {
   font-weight: normal;
 }
 
-@media (max-width: 641px) {
+@media (max-width: 834px) {
+  h1 {
+    font-size: 4rem;
+    line-height: 4.5rem;
+  }
+
   .search-bar {
-    width: 80%;
+    width: 90%;
   }
 
   .cards {
     display: flex;
     gap: 2rem;
     flex-direction: column;
-    max-width: 90%;
-    margin: 2rem auto;
+    width: 90%;
+    margin: 1rem auto;
   }
 
   .cardsTwo {
@@ -592,10 +614,11 @@ h1 {
     gap: 2rem;
     width: 90%;
     flex-direction: column;
+    margin: 0 auto;
   }
 
   .card {
-    min-width: 95%;
+    width: 100%;
     margin: 0 auto;
   }
 
@@ -605,6 +628,7 @@ h1 {
     flex-direction: column;
     align-items: center;
     height: 90%;
+    margin-bottom: 1rem;
   }
 
   .sun {
@@ -644,6 +668,10 @@ h1 {
     width: 100%;
   }
 
+  .forecast-days {
+    justify-content: space-around;
+  }
+
   .forecast-card {
     display: flex;
     justify-content: center;
@@ -656,9 +684,9 @@ h1 {
   }
 
   .forecast-hourly {
-    width: 90%;
+    width: 100%;
     height: 750px;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
   }
 
   .forecast-hours {
