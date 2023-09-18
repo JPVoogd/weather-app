@@ -4,8 +4,8 @@
     <main>
       <h1 class="title">Anemoi's Forecast</h1>
       <div class="search-box">
-        <input type="text" class="search-bar" v-model="query" placeholder="Enter city name"
-          @keydown.enter="fetchLocation" ref="input"/>
+        <input type="text" class="search-bar" v-model="query" placeholder="Enter city name" @keydown.enter="fetchLocation"
+          ref="input" />
       </div>
 
       <div class="weather-wrap" v-if="weatherData">
@@ -82,88 +82,29 @@
         <div class="cardsTwo">
           <div class="card forecast-day">
             <h2>5 Days Forecast:</h2>
-            <div class="flex-container">
+            <template v-for="n in 5">
               <div class="forecast-days">
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[0].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p class="item">{{ Math.round(weatherData.daily[0].temp.day) }}°C</p>
-                <p class="item">{{ getLocalDate(weatherData.daily[0].dt, weatherData.timezone_offset) }}</p>
+                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[n].weather[0].icon)}`)"
+                  alt="Weather Icon">
+                <p class="item">{{ Math.round(weatherData.daily[n].temp.day) }}°C</p>
+                <p class="item">{{ getLocalDate(weatherData.daily[n].dt, weatherData.timezone_offset) }}</p>
               </div>
-
-              <div class="forecast-days">
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[1].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p class="item">{{ Math.round(weatherData.daily[1].temp.day) }}°C</p>
-                <p class="item">{{ getLocalDate(weatherData.daily[1].dt, weatherData.timezone_offset) }}</p>
-              </div>
-
-              <div class="forecast-days">
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[2].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p class="item">{{ Math.round(weatherData.daily[2].temp.day) }}°C</p>
-                <p class="item">{{ getLocalDate(weatherData.daily[2].dt, weatherData.timezone_offset) }}</p>
-              </div>
-
-              <div class="forecast-days">
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[3].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p class="item">{{ Math.round(weatherData.daily[3].temp.day) }}°C</p>
-                <p class="item">{{ getLocalDate(weatherData.daily[3].dt, weatherData.timezone_offset) }}</p>
-              </div>
-
-              <div class="forecast-days">
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.daily[4].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p class="item">{{ Math.round(weatherData.daily[4].temp.day) }}°C</p>
-                <p class="item">{{ getLocalDate(weatherData.daily[4].dt, weatherData.timezone_offset) }}</p>
-              </div>
-            </div>
+            </template>
           </div>
 
           <div class="card forecast-hourly">
             <h2>Hourly Forecast:</h2>
-
             <div class="forecast-card">
-              <div class="forecast-hours">
-                <p>{{ localTime(weatherData.hourly[1].dt, weatherData.timezone_offset) }}</p>
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[1].weather[0].icon)}`)"
-                  alt="Weather Icon">
-                <p>{{ Math.round(weatherData.hourly[1].temp) }}°C</p>
-                <p>{{ weatherData.hourly[1].weather[0].description }}</p>
-              </div>
-
-              <div class="forecast-hours">
-                <p>{{ localTime(weatherData.hourly[2].dt, weatherData.timezone_offset) }}</p>
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[2].weather[0].icon)}`)"
-                  alt="Weather Icon">
-                <p>{{ Math.round(weatherData.hourly[2].temp) }}°C</p>
-                <p>{{ weatherData.hourly[2].weather[0].description }}</p>
-              </div>
-
-              <div class="forecast-hours">
-                <p>{{ localTime(weatherData.hourly[3].dt, weatherData.timezone_offset) }}</p>
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[3].weather[0].icon)}`)"
-                  alt="Weather Icon">
-                <p>{{ Math.round(weatherData.hourly[3].temp) }}°C</p>
-                <p>{{ weatherData.hourly[3].weather[0].description }}</p>
-              </div>
-
-              <div class="forecast-hours">
-                <p>{{ localTime(weatherData.hourly[4].dt, weatherData.timezone_offset) }}</p>
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[4].weather[0].icon)}`)"
-                  alt="Weather Icon">
-                <p>{{ Math.round(weatherData.hourly[4].temp) }}°C</p>
-                <p>{{ weatherData.hourly[4].weather[0].description }}</p>
-              </div>
-
-              <div class="forecast-hours">
-                <p>{{ localTime(weatherData.hourly[5].dt, weatherData.timezone_offset) }}</p>
-                <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[5].weather[0].icon)}`)"
-                     alt="Weather Icon">
-                <p>{{ Math.round(weatherData.hourly[5].temp) }}°C</p>
-                <p>{{ weatherData.hourly[5].weather[0].description }}</p>
-              </div>
+              <template v-for="n in 12">
+                <div class="forecast-hours">
+                  <p>{{ localTime(weatherData.hourly[n].dt, weatherData.timezone_offset) }}</p>
+                  <img :src="require(`@/assets/weather/${getWeatherIcon(weatherData.hourly[n].weather[0].icon)}`)"
+                    alt="Weather Icon">
+                  <p>{{ Math.round(weatherData.hourly[n].temp) }}°C</p>
+                </div>
+              </template>
             </div>
+
           </div>
         </div>
       </div>
@@ -280,13 +221,10 @@ export default {
       const hours = dateObject.getUTCHours();
       const minutes = dateObject.getUTCMinutes();
 
-      // Format hours and minutes as strings with leading zeros
       const formattedHours = hours.toString().padStart(2, '0');
       const formattedMinutes = minutes.toString().padStart(2, '0');
 
-      // Combine hours and minutes into a formatted string
       const formattedTime = `${formattedHours}:${formattedMinutes}`;
-
 
       return `${formattedTime}`;
     }
@@ -552,18 +490,17 @@ h1 {
 
 .forecast-card {
   display: flex;
-  justify-content: center;
+  justify-content: safe space-evenly;
   align-items: center;
   flex-direction: row;
+  overflow-x: auto;
   gap: 1rem;
-  padding: 1rem;
-
+  padding: 2rem 0;
 }
 
 .forecast-hours {
   background: #373636;
-  width: 20%;
-  min-height: 211px;
+  width: 15%;
   border-radius: 30px;
   padding: 1rem;
 }
@@ -583,11 +520,6 @@ h1 {
 
 .forecast-hours p:nth-child(3) {
   font-size: 1rem;
-}
-
-.forecast-hours p:nth-child(4) {
-  font-size: 1rem;
-  font-weight: normal;
 }
 
 @media (max-width: 834px) {
@@ -718,4 +650,5 @@ h1 {
     font-size: 1rem;
     font-weight: normal;
   }
-}</style>
+}
+</style>
