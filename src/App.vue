@@ -10,7 +10,7 @@
 
       <div class="weather-wrap" v-if="weatherData">
 
-        <div class="cards">
+        <div class="first-row">
           <div class="card location">
             <div class="location-card">{{ location[0].name }}, {{ location[0].country }}</div>
             <div class="time">{{ localTime(weatherData.current.dt, weatherData.timezone_offset) }}</div>
@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <div class="cardsTwo">
+        <div class="second-row">
           <div class="card forecast-day">
             <h2>5 Days Forecast:</h2>
             <template v-for="n in 5">
@@ -276,7 +276,7 @@ h1 {
   margin: 1rem auto;
 }
 
-.cards {
+.first-row {
   display: flex;
   justify-content: space-evenly;
   gap: 2rem;
@@ -284,7 +284,7 @@ h1 {
   margin: 2rem auto;
 }
 
-.cardsTwo {
+.second-row {
   display: flex;
   justify-content: space-evenly;
   gap: 2rem;
@@ -547,6 +547,7 @@ h1 {
     width: 90%;
     flex-direction: column;
     margin: 0 auto;
+    padding-bottom: 1.5rem;
   }
 
   .card {
@@ -617,14 +618,13 @@ h1 {
 
   .forecast-hourly {
     width: 100%;
-    height: 750px;
-    margin-bottom: 4rem;
+    height: 35%;
+    margin-bottom: 1rem;
   }
 
   .forecast-hours {
     background: #373636;
     width: 45%;
-    min-height: 211px;
     border-radius: 30px;
     padding: 1rem 0;
   }
