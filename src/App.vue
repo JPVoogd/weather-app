@@ -532,7 +532,7 @@ h1 {
     width: 90%;
   }
 
-  .cards {
+  .first-row {
     display: flex;
     gap: 2rem;
     flex-direction: column;
@@ -540,7 +540,7 @@ h1 {
     margin: 1rem auto;
   }
 
-  .cardsTwo {
+  .second-row {
     display: flex;
     justify-content: space-evenly;
     gap: 2rem;
